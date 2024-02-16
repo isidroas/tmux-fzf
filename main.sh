@@ -4,19 +4,19 @@ CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 [[ -z "$TMUX_FZF_ORDER" ]] && TMUX_FZF_ORDER="copy-mode|session|window|pane|command|keybinding|clipboard|process"
 source "$CURRENT_DIR/scripts/.envs"
 
-# TODO: earlier transfrom to newlines or shell array
+items_origin2="$(echo $TMUX_FZF_ORDER | tr '|' '\n')"
+
 # remove copy-mode from options if we aren't in copy-mode
-if [[ "$TMUX_FZF_ORDER" == *"copy-mode"* ]] && [ "$(tmux display-message -p '#{pane_in_mode}')" -eq 0 ]; then
-    TMUX_FZF_ORDER="$(echo $TMUX_FZF_ORDER | sed -E 's/\|?copy-mode\|?//')" # TODO: more easy 'd/copy-mode/'. Esto soluciona el bug de que copy-mode esté en medio y elimine un '|' de más
+if [ "$(tmux display-message -p '#{pane_in_mode}')" -eq 0 ]; then
+    items_origin="$(sed '/copy-mode/d'<<<${items_origin2})" # Esto soluciona el bug de que copy-mode esté en medio y elimine un '|' de más
 fi
 
-items_origin="$(echo $TMUX_FZF_ORDER | tr '|' '\n')"
 
-
-if [[ -z "$TMUX_FZF_MENU" ]]; then
-    item=$(printf "%s\n[cancel]" "$items_origin" | eval "$TMUX_FZF_BIN $TMUX_FZF_OPTIONS")
-else
-    item=$(printf "menu\n%s\n[cancel]" "$items_origin" | eval "$TMUX_FZF_BIN $TMUX_FZF_OPTIONS")
+if [[ ! -z "$TMUX_FZF_MENU" ]]; then
+    items_origin+=$'\nmenu'
 fi
+
+
+item=$($TMUX_FZF_BIN $TMUX_FZF_OPTIONS <<< ${items_origin}$'\n[cancel]')
 [[ "$item" == "[cancel]" || -z "$item" ]] && exit
 tmux run-shell -b "$CURRENT_DIR/scripts/${item}.sh"
