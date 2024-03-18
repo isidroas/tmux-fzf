@@ -29,7 +29,7 @@ fi
 [[ "$action" == "[cancel]" || -z "$action" ]] && exit
 if [[ "$action" == "link" ]]; then
     cur_ses=$(tmux display-message -p | sed -e 's/^.//' -e 's/].*//')
-    last_win_num=$(tmux list-windows | sort -r | sed '2,$d' | sed 's/:.*//')
+    last_win_num=$(tmux list-windows | sort -r | sed '2,$d' | sed 's/:.*//') # not used
     windows=$(echo "$windows" | grep -v "^$cur_ses")
     FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS --header='Select source window.'"
     src_win_origin=$(printf "%s\n[cancel]" "$windows" | eval "$TMUX_FZF_BIN $TMUX_FZF_OPTIONS $TMUX_FZF_PREVIEW_OPTIONS")
@@ -38,7 +38,7 @@ if [[ "$action" == "link" ]]; then
     tmux link-window -a -s "$src_win" -t "$cur_ses"
 elif [[ "$action" == "move" ]]; then
     cur_ses=$(tmux display-message -p | sed -e 's/^.//' -e 's/].*//')
-    last_win_num=$(tmux list-windows | sort -r | sed '2,$d' | sed 's/:.*//')
+    last_win_num=$(tmux list-windows | sort -r | sed '2,$d' | sed 's/:.*//') # not used
     windows=$(echo "$windows" | grep -v "^$cur_ses")
     FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS --header='Select source window.'"
     src_win_origin=$(printf "%s\n[cancel]" "$windows" | eval "$TMUX_FZF_BIN $TMUX_FZF_OPTIONS $TMUX_FZF_PREVIEW_OPTIONS")

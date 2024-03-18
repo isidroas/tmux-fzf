@@ -14,15 +14,25 @@ fi
 
 FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS --header='Select an action.'"
 if [[ -z "$1" ]]; then
-    action=$(printf "switch\nbreak\njoin\nswap\nlayout\nkill\nresize\nrename\n[cancel]" | eval "$TMUX_FZF_BIN $TMUX_FZF_OPTIONS")
+    action=$(printf "\
+switch
+break
+join
+swap
+layout
+kill
+resize
+rename
+[cancel]
+" | eval "$TMUX_FZF_BIN $TMUX_FZF_OPTIONS")
 else
     action="$1"
 fi
 
 [[ "$action" == "[cancel]" || -z "$action" ]] && exit
 if [[ "$action" == "layout" ]]; then
-    FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS --header='Select a layout.'"
-    target_origin=$(printf "even-horizontal\neven-vertical\nmain-horizontal\nmain-vertical\ntiled\n[cancel]" | eval "$TMUX_FZF_BIN $TMUX_FZF_OPTIONS")
+    FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS "
+    target_origin=$(printf "even-horizontal\neven-vertical\nmain-horizontal\nmain-vertical\ntiled\n[cancel]" | eval "$TMUX_FZF_BIN $TMUX_FZF_OPTIONS --header='Select a layout.'")
     [[ "$target_origin" == "[cancel]" || -z "$target_origin" ]] && exit
     tmux select-layout "$target_origin"
 elif [[ "$action" == "resize" ]]; then

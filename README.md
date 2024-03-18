@@ -79,7 +79,6 @@ When you select `sh`, tmux will execute `sh ~/test.sh`.
 **Note:**
 
 - `foo` and `echo 'hello'` are separated by `\n` in `TMUX_FZF_MENU`, and you need to add another `\n` after `echo 'hello'`.
-- **DO NOT** add additional white spaces/tabs at the beginning of each line.
 - Commands are executed using `tmux -c`, so please make sure `tmux -c "your command"` does work.
 
 ## Popup Window
